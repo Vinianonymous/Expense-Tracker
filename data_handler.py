@@ -1,17 +1,21 @@
-from csv import DictReader, DictWriter
+import csv
+
+FIELDS = ["id", "name", "date", "amount"]
 
 
 def load_data():
-    with open("expenses.csv", "r") as f:
-        fields = ["id", "date", "description", "amount"]
-        reader = DictReader(f, fieldnames=fields)
-        expenses = list(reader)
-        expenses.remove(expenses[0])  # Remove the header row
-        return expenses
+    try:
+        with open("expenses.csv", "r", newline="") as f:
+            return list(csv.DictReader(f))
+    except FileNotFoundError:
+        with open("expenses.csv", "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=FIELDS)
+            writer.writeheader()
+        return []
 
 
-def write_data(data: dict):
-    with open("expenses.csv", "a", newline="") as f:
-        fields = ["id", "date", "description", "amount"]
-        writer = DictWriter(f, fieldnames=fields)
-        writer.writerow(data)
+def write_data(data):
+    with open("expenses.csv", "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=FIELDS)
+        writer.writeheader()
+        writer.writerows(data)
